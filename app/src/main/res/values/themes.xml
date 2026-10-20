@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- El fondo petróleo evita un destello blanco al abrir la app -->
+    <style name="Theme.MPAZPRO3" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/petroleo</item>
+    </style>
+</resources>
