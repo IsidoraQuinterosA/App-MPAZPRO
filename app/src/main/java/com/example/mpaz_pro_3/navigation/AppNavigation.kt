@@ -15,14 +15,17 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.mpaz_pro_3.model.Rol
 import com.example.mpaz_pro_3.ui.screens.DocenteScreen
 import com.example.mpaz_pro_3.ui.screens.EstudianteScreen
 import com.example.mpaz_pro_3.ui.screens.LoginScreen
 import com.example.mpaz_pro_3.ui.screens.RolesScreen
+import com.example.mpaz_pro_3.ui.screens.UnidadScreen
 import com.example.mpaz_pro_3.ui.screens.UtpScreen
 import com.example.mpaz_pro_3.ui.theme.Amarillo
 import com.example.mpaz_pro_3.ui.theme.Petroleo
@@ -75,7 +78,23 @@ fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
         }
 
         composable(Rutas.ESTUDIANTE) {
-            EstudianteScreen(onSesionCerrada = { irARoles(navController) })
+            EstudianteScreen(
+                onSesionCerrada = { irARoles(navController) },
+                onAbrirUnidad = { objetivoId -> navController.navigate(Rutas.unidad(objetivoId)) }
+            )
+        }
+
+        composable(
+            route = Rutas.UNIDAD,
+            arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
+        ) {
+            UnidadScreen(
+                onVolver = { navController.popBackStack() },
+                onAprende = { },
+                onDesafios = { },
+                onPrueba = { },
+                onVerResultado = { }
+            )
         }
 
         composable(Rutas.DOCENTE) {

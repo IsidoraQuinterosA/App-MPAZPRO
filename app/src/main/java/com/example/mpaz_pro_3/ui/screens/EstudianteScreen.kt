@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun EstudianteScreen(
     onSesionCerrada: () -> Unit,
+    onAbrirUnidad: (Int) -> Unit,
     viewModel: SesionViewModel = viewModel(),
     estudianteViewModel: EstudianteViewModel = viewModel()
 ) {
@@ -74,10 +75,12 @@ fun EstudianteScreen(
                     color = colorAsignatura(asignatura.name),
                     icono = iconoAsignatura(asignatura.name),
                     onClick = {
-                        scope.launch {
-                            val mensaje = if (disponible) "${asignatura.nombre}: las actividades llegan en la Fase 3"
-                            else "${asignatura.nombre} aún no está disponible"
-                            snackbarHostState.showSnackbar(mensaje)
+                        if (disponible && objetivo != null) {
+                            onAbrirUnidad(objetivo.id)
+                        } else {
+                            scope.launch {
+                                snackbarHostState.showSnackbar("${asignatura.nombre} aún no está disponible")
+                            }
                         }
                     }
                 )

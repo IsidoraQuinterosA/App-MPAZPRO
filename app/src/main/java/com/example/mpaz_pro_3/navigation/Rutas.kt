@@ -9,6 +9,11 @@ object Rutas {
     const val DOCENTE = "docente"
     const val UTP = "utp"
 
+    // Pantallas del estudiante (reciben el id del objetivo)
+    const val UNIDAD = "unidad/{objetivoId}"
+
+    fun unidad(objetivoId: Int) = "unidad/$objetivoId"
+
     fun login(rol: Rol) = "login/${rol.name}"
 
     fun panelDe(rol: Rol) = when (rol) {
