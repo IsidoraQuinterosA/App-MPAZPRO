@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -77,6 +78,8 @@ fun TarjetaOpcion(
 @Composable
 fun TarjetaAsignatura(
     nombre: String,
+    subtitulo: String,
+    disponible: Boolean,
     color: Color,
     icono: ImageVector,
     onClick: () -> Unit
@@ -92,14 +95,15 @@ fun TarjetaAsignatura(
         shape = MaterialTheme.shapes.large,
         modifier = Modifier
             .fillMaxWidth()
-            .height(160.dp)
+            .height(170.dp)
             .scale(escala)
+            .alpha(if (disponible) 1f else 0.55f)  // Las no disponibles se ven más claras
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Icon(icono, contentDescription = null, modifier = Modifier.size(44.dp))
             Spacer(Modifier.weight(1f))
             Text(nombre, style = MaterialTheme.typography.titleLarge)
-            Text("Unidad 1", style = MaterialTheme.typography.labelMedium)
+            Text(subtitulo, style = MaterialTheme.typography.labelMedium)
         }
     }
 }

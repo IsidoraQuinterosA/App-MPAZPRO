@@ -31,15 +31,18 @@ import com.example.mpaz_pro_3.ui.theme.HistoriaColor
 import com.example.mpaz_pro_3.ui.theme.LenguajeColor
 import com.example.mpaz_pro_3.ui.theme.MatematicaColor
 import com.example.mpaz_pro_3.ui.utils.esPantallaAncha
+import com.example.mpaz_pro_3.viewmodel.EstudianteViewModel
 import com.example.mpaz_pro_3.viewmodel.SesionViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun EstudianteScreen(
     onSesionCerrada: () -> Unit,
-    viewModel: SesionViewModel = viewModel()
+    viewModel: SesionViewModel = viewModel(),
+    estudianteViewModel: EstudianteViewModel = viewModel()
 ) {
     val sesion by viewModel.sesion.collectAsStateWithLifecycle()
+    val objetivos by estudianteViewModel.objetivos.collectAsStateWithLifecycle()
     val cerrando by viewModel.cerrando.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -66,13 +69,22 @@ fun EstudianteScreen(
                 Text("Tus asignaturas", style = MaterialTheme.typography.titleLarge)
             }
             items(Asignatura.entries) { asignatura ->
+                // Busca en Room el objetivo de esta asignatura.
+                // Solo está disponible si UTP lo aprobó y el docente lo asignó.
+                val objetivo = objetivos.find { it.asignatura == asignatura.name }
+                val disponible = objetivo != null && objetivo.estado == "APROBADO" && objetivo.asignado
+
                 TarjetaAsignatura(
                     nombre = asignatura.nombre,
+                    subtitulo = if (disponible) objetivo?.unidad ?: "" else "Próximamente",
+                    disponible = disponible,
                     color = colorAsignatura(asignatura),
                     icono = iconoAsignatura(asignatura),
                     onClick = {
                         scope.launch {
-                            snackbarHostState.showSnackbar("${asignatura.nombre}: disponible en la siguiente fase")
+                            val mensaje = if (disponible) "${asignatura.nombre}: las actividades llegan en la Fase 3"
+                            else "${asignatura.nombre} aún no está disponible"
+                            snackbarHostState.showSnackbar(mensaje)
                         }
                     }
                 )
