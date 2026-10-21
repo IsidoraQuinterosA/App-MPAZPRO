@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Recurso nativo Internet: permiso para saber si hay conexión -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <!-- android:name apunta a MpazApp, que crea la base de datos y la sesión una sola vez -->
     <!-- No se fija screenOrientation: la app funciona en vertical y horizontal -->
     <application

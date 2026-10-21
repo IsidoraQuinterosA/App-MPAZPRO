@@ -7,6 +7,7 @@ import com.example.mpaz_pro_3.data.repository.ContenidoRepository
 import com.example.mpaz_pro_3.data.repository.GuiaRepository
 import com.example.mpaz_pro_3.data.repository.ProgresoRepository
 import com.example.mpaz_pro_3.data.repository.UsuarioRepository
+import com.example.mpaz_pro_3.util.ConexionInternet
 
 // Se crea una sola vez al abrir la app.
 // Aquí se crean la base de datos y los repositorios para que toda la app use los mismos.
@@ -23,4 +24,6 @@ class MpazApp : Application() {
     val progresoRepository by lazy { ProgresoRepository(database.progresoDao()) }
 
     val guiaRepository by lazy { GuiaRepository(database.guiaDao()) }
+
+    val conexionInternet by lazy { ConexionInternet(this) }
 }

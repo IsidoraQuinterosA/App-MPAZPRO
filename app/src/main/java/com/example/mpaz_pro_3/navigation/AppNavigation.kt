@@ -1,5 +1,22 @@
 package com.example.mpaz_pro_3.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.ui.unit.dp
+import com.example.mpaz_pro_3.ui.theme.Blanco
+import com.example.mpaz_pro_3.ui.theme.ErrorRojo
+import com.example.mpaz_pro_3.viewmodel.ConexionViewModel
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -40,8 +57,12 @@ import com.example.mpaz_pro_3.ui.theme.Petroleo
 import com.example.mpaz_pro_3.viewmodel.SesionViewModel
 
 @Composable
-fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
+fun AppNavigation(
+    sesionViewModel: SesionViewModel = viewModel(),
+    conexionViewModel: ConexionViewModel = viewModel()
+) {
     val rutaInicial by sesionViewModel.rutaInicial.collectAsStateWithLifecycle()
+    val conectado by conexionViewModel.conectado.collectAsStateWithLifecycle()
     val navController = rememberNavController()
 
     // Mientras se revisa si hay sesión guardada, se muestra un indicador de carga
@@ -58,124 +79,153 @@ fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
         return
     }
 
-    NavHost(
-        navController = navController,
-        startDestination = inicio,
-        // Animaciones al cambiar de pantalla
-        enterTransition = { slideInHorizontally { it / 3 } + fadeIn() },
-        exitTransition = { fadeOut() },
-        popEnterTransition = { fadeIn() },
-        popExitTransition = { slideOutHorizontally { it / 3 } + fadeOut() }
+    // Box permite mostrar el aviso de conexión encima de cualquier pantalla
+    Box(modifier = Modifier.fillMaxSize()) {
+        NavHost(
+            navController = navController,
+            startDestination = inicio,
+            // Animaciones al cambiar de pantalla
+            enterTransition = { slideInHorizontally { it / 3 } + fadeIn() },
+            exitTransition = { fadeOut() },
+            popEnterTransition = { fadeIn() },
+            popExitTransition = { slideOutHorizontally { it / 3 } + fadeOut() }
+        ) {
+            composable(Rutas.ROLES) {
+                RolesScreen(onRolSeleccionado = { rol -> navController.navigate(Rutas.login(rol)) })
+            }
+
+            composable(Rutas.LOGIN) { entrada ->
+                val rol = Rol.valueOf(entrada.arguments?.getString("rol") ?: Rol.ESTUDIANTE.name)
+                LoginScreen(
+                    rol = rol,
+                    onVolver = { navController.popBackStack() },
+                    onIngresoExitoso = {
+                        navController.navigate(Rutas.panelDe(rol)) {
+                            // Se borra el historial: "atrás" no vuelve al login
+                            popUpTo(Rutas.ROLES) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            composable(Rutas.ESTUDIANTE) {
+                EstudianteScreen(
+                    onSesionCerrada = { irARoles(navController) },
+                    onAbrirUnidad = { objetivoId -> navController.navigate(Rutas.unidad(objetivoId)) }
+                )
+            }
+
+            composable(
+                route = Rutas.UNIDAD,
+                arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
+            ) { entrada ->
+                val objetivoId = entrada.arguments?.getInt("objetivoId") ?: 0
+                UnidadScreen(
+                    onVolver = { navController.popBackStack() },
+                    onAprende = { navController.navigate(Rutas.aprende(objetivoId)) },
+                    onDesafios = { navController.navigate(Rutas.desafios(objetivoId)) },
+                    onPrueba = { navController.navigate(Rutas.prueba(objetivoId)) },
+                    onVerResultado = { intentoId -> navController.navigate(Rutas.resultado(intentoId)) }
+                )
+            }
+
+            composable(
+                route = Rutas.APRENDE,
+                arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
+            ) {
+                AprendeScreen(onVolver = { navController.popBackStack() })
+            }
+
+            composable(
+                route = Rutas.DESAFIOS,
+                arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
+            ) {
+                DesafiosScreen(onVolver = { navController.popBackStack() })
+            }
+
+            composable(
+                route = Rutas.PRUEBA,
+                arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
+            ) {
+                PruebaScreen(
+                    onVolver = { navController.popBackStack() },
+                    onTerminada = { intentoId ->
+                        // Se quita la prueba del historial: "atrás" vuelve a la unidad
+                        navController.navigate(Rutas.resultado(intentoId)) {
+                            popUpTo(Rutas.PRUEBA) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            composable(
+                route = Rutas.RESULTADO,
+                arguments = listOf(navArgument("intentoId") { type = NavType.LongType })
+            ) {
+                ResultadoScreen(onVolver = { navController.popBackStack() })
+            }
+
+            composable(Rutas.DOCENTE) {
+                DocenteScreen(
+                    onSesionCerrada = { irARoles(navController) },
+                    onAsignar = { navController.navigate(Rutas.ASIGNAR) },
+                    onGuias = { navController.navigate(Rutas.GUIAS) },
+                    onInforme = { navController.navigate(Rutas.INFORME) }
+                )
+            }
+
+            composable(Rutas.INFORME) {
+                InformeScreen(onVolver = { navController.popBackStack() })
+            }
+
+            composable(Rutas.GUIAS) {
+                GuiasScreen(onVolver = { navController.popBackStack() })
+            }
+
+            composable(Rutas.ASIGNAR) {
+                AsignarScreen(onVolver = { navController.popBackStack() })
+            }
+
+            composable(Rutas.UTP) {
+                UtpScreen(
+                    onSesionCerrada = { irARoles(navController) },
+                    onRevisar = { objetivoId -> navController.navigate(Rutas.revision(objetivoId)) }
+                )
+            }
+
+            composable(
+                route = Rutas.REVISION,
+                arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
+            ) {
+                RevisionScreen(onVolver = { navController.popBackStack() })
+            }
+        }
+
+        // Aviso animado cuando no hay internet
+        AnimatedVisibility(
+            visible = !conectado,
+            enter = slideInVertically { it } + fadeIn(),
+            exit = slideOutVertically { it } + fadeOut(),
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
+            AvisoSinConexion()
+        }
+    }
+}
+
+@Composable
+private fun AvisoSinConexion() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(ErrorRojo)
+            .navigationBarsPadding()
+            .padding(12.dp)
     ) {
-        composable(Rutas.ROLES) {
-            RolesScreen(onRolSeleccionado = { rol -> navController.navigate(Rutas.login(rol)) })
-        }
-
-        composable(Rutas.LOGIN) { entrada ->
-            val rol = Rol.valueOf(entrada.arguments?.getString("rol") ?: Rol.ESTUDIANTE.name)
-            LoginScreen(
-                rol = rol,
-                onVolver = { navController.popBackStack() },
-                onIngresoExitoso = {
-                    navController.navigate(Rutas.panelDe(rol)) {
-                        // Se borra el historial: "atrás" no vuelve al login
-                        popUpTo(Rutas.ROLES) { inclusive = true }
-                    }
-                }
-            )
-        }
-
-        composable(Rutas.ESTUDIANTE) {
-            EstudianteScreen(
-                onSesionCerrada = { irARoles(navController) },
-                onAbrirUnidad = { objetivoId -> navController.navigate(Rutas.unidad(objetivoId)) }
-            )
-        }
-
-        composable(
-            route = Rutas.UNIDAD,
-            arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
-        ) { entrada ->
-            val objetivoId = entrada.arguments?.getInt("objetivoId") ?: 0
-            UnidadScreen(
-                onVolver = { navController.popBackStack() },
-                onAprende = { navController.navigate(Rutas.aprende(objetivoId)) },
-                onDesafios = { navController.navigate(Rutas.desafios(objetivoId)) },
-                onPrueba = { navController.navigate(Rutas.prueba(objetivoId)) },
-                onVerResultado = { intentoId -> navController.navigate(Rutas.resultado(intentoId)) }
-            )
-        }
-
-        composable(
-            route = Rutas.APRENDE,
-            arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
-        ) {
-            AprendeScreen(onVolver = { navController.popBackStack() })
-        }
-
-        composable(
-            route = Rutas.DESAFIOS,
-            arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
-        ) {
-            DesafiosScreen(onVolver = { navController.popBackStack() })
-        }
-
-        composable(
-            route = Rutas.PRUEBA,
-            arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
-        ) {
-            PruebaScreen(
-                onVolver = { navController.popBackStack() },
-                onTerminada = { intentoId ->
-                    // Se quita la prueba del historial: "atrás" vuelve a la unidad
-                    navController.navigate(Rutas.resultado(intentoId)) {
-                        popUpTo(Rutas.PRUEBA) { inclusive = true }
-                    }
-                }
-            )
-        }
-
-        composable(
-            route = Rutas.RESULTADO,
-            arguments = listOf(navArgument("intentoId") { type = NavType.LongType })
-        ) {
-            ResultadoScreen(onVolver = { navController.popBackStack() })
-        }
-
-        composable(Rutas.DOCENTE) {
-            DocenteScreen(
-                onSesionCerrada = { irARoles(navController) },
-                onAsignar = { navController.navigate(Rutas.ASIGNAR) },
-                onGuias = { navController.navigate(Rutas.GUIAS) },
-                onInforme = { navController.navigate(Rutas.INFORME) }
-            )
-        }
-
-        composable(Rutas.INFORME) {
-            InformeScreen(onVolver = { navController.popBackStack() })
-        }
-
-        composable(Rutas.GUIAS) {
-            GuiasScreen(onVolver = { navController.popBackStack() })
-        }
-
-        composable(Rutas.ASIGNAR) {
-            AsignarScreen(onVolver = { navController.popBackStack() })
-        }
-
-        composable(Rutas.UTP) {
-            UtpScreen(
-                onSesionCerrada = { irARoles(navController) },
-                onRevisar = { objetivoId -> navController.navigate(Rutas.revision(objetivoId)) }
-            )
-        }
-
-        composable(
-            route = Rutas.REVISION,
-            arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
-        ) {
-            RevisionScreen(onVolver = { navController.popBackStack() })
-        }
+        Icon(Icons.Filled.WifiOff, contentDescription = null, tint = Blanco)
+        Spacer(Modifier.width(8.dp))
+        Text("Sin conexión a internet. Tu avance se guarda en el teléfono.", color = Blanco)
     }
 }
 
