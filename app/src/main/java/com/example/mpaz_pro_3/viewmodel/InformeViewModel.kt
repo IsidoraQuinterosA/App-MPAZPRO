@@ -1,11 +1,13 @@
 package com.example.mpaz_pro_3.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mpaz_pro_3.MpazApp
 import com.example.mpaz_pro_3.data.local.ObjetivoAprendizaje
 import com.example.mpaz_pro_3.util.Validaciones
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class PreguntaInforme(val numero: Int, val enunciado: String, val porcentaje: Int)
 
@@ -124,6 +127,44 @@ class InformeViewModel(application: Application) : AndroidViewModel(application)
                 objetivo.copy(informeValidado = true, fechaValidacion = System.currentTimeMillis())
             )
             _state.update { it.copy(validando = false, mensaje = "Informe validado") }
+        }
+    }
+
+    // Recurso nativo Archivos: guarda el informe como CSV donde el docente elija
+    // (Descargas, Drive, etc.). El CSV se puede abrir con Excel o Google Sheets.
+    fun exportar(uri: Uri) {
+        val actual = _state.value
+        val objetivo = actual.objetivo ?: return
+
+        val texto = buildString {
+            appendLine("Informe pedagógico MPAZ PRO 3 - Uso exclusivo docente")
+            appendLine("Asignatura;${objetivo.asignatura}")
+            appendLine("Unidad;${objetivo.unidad}")
+            appendLine("Objetivo;${objetivo.descripcion}")
+            appendLine("Estado;${if (objetivo.informeValidado) "Validado" else "Pendiente de validación"}")
+            appendLine("Estudiantes;${actual.estudiantes}")
+            appendLine("Intentos;${actual.totalIntentos}")
+            appendLine("Logro promedio;${actual.promedio}%")
+            appendLine()
+            appendLine("Pregunta;Porcentaje de respuestas correctas")
+            actual.preguntas.forEach { appendLine("${it.numero}. ${it.enunciado};${it.porcentaje}%") }
+            appendLine()
+            appendLine("RUT;Mejor puntaje;Intentos")
+            actual.porEstudiante.forEach { appendLine("${it.rut};${it.mejorPuntaje};${it.intentos}") }
+        }
+
+        viewModelScope.launch {
+            val exito = withContext(Dispatchers.IO) {
+                try {
+                    app.contentResolver.openOutputStream(uri)?.use { salida ->
+                        salida.write(texto.toByteArray(Charsets.UTF_8))
+                    }
+                    true
+                } catch (e: Exception) {
+                    false
+                }
+            }
+            _state.update { it.copy(mensaje = if (exito) "Informe exportado correctamente" else "No se pudo exportar el informe") }
         }
     }
 }

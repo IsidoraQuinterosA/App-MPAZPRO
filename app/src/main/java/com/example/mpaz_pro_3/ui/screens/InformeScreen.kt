@@ -1,5 +1,7 @@
 package com.example.mpaz_pro_3.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,6 +23,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,6 +57,13 @@ fun InformeScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val objetivo = state.objetivo
+
+    // Recurso nativo Archivos: el docente elige dónde guardar el archivo
+    val selectorDestino = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/csv")
+    ) { uri ->
+        if (uri != null) viewModel.exportar(uri)
+    }
 
     PantallaConVolver(titulo = "Informe pedagógico", onVolver = onVolver) {
         Card(colors = CardDefaults.cardColors(containerColor = AmarilloClaro)) {
@@ -147,6 +158,15 @@ fun InformeScreen(
             }
             MensajeErrorCampo(state.errorRevisado)
             BotonCarga(texto = "Validar informe", cargando = state.validando, onClick = viewModel::validar)
+        }
+
+        OutlinedButton(
+            onClick = { selectorDestino.launch("informe_${objetivo.asignatura.lowercase()}.csv") },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(Icons.Filled.Download, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text("Descargar informe (CSV)")
         }
 
         AnimatedVisibility(visible = state.mensaje != null) {
