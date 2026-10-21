@@ -163,7 +163,10 @@ fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
         }
 
         composable(Rutas.UTP) {
-            UtpScreen(onSesionCerrada = { irARoles(navController) })
+            UtpScreen(
+                onSesionCerrada = { irARoles(navController) },
+                onRevisar = { }
+            )
         }
     }
 }
