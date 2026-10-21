@@ -1,22 +1,28 @@
 package com.example.mpaz_pro_3.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -25,12 +31,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mpaz_pro_3.ui.components.BotonCarga
 import com.example.mpaz_pro_3.ui.components.EtiquetaEstado
+import com.example.mpaz_pro_3.ui.components.ImagenArchivo
 import com.example.mpaz_pro_3.ui.components.PantallaConVolver
 import com.example.mpaz_pro_3.ui.theme.Blanco
 import com.example.mpaz_pro_3.ui.theme.Borde
@@ -110,6 +118,35 @@ fun AsignarScreen(
         }
 
         BotonCarga(texto = "Guardar asignación", cargando = state.guardando, onClick = viewModel::guardar)
+
+        // Recurso nativo Galería: el selector de fotos de Android (no necesita permisos)
+        val selectorImagen = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickVisualMedia()
+        ) { uri ->
+            if (uri != null) viewModel.guardarImagen(uri)
+        }
+
+        Text("3. Imagen de apoyo para \"Aprende\"", style = MaterialTheme.typography.titleMedium)
+        if (state.imagen.isNotEmpty()) {
+            ImagenArchivo(
+                ruta = state.imagen,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .clip(MaterialTheme.shapes.large)
+            )
+        }
+        OutlinedButton(
+            onClick = {
+                selectorImagen.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            },
+            enabled = !state.guardandoImagen,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(Icons.Filled.PhotoLibrary, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text(if (state.guardandoImagen) "Guardando imagen..." else "Elegir imagen de la galería")
+        }
 
         AnimatedVisibility(visible = state.mensaje != null) {
             Card(colors = CardDefaults.cardColors(containerColor = ExitoFondo)) {
