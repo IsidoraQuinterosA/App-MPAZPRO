@@ -12,7 +12,10 @@ de estudiante, docente y jefatura UTP.
 - Selección de perfil (estudiante, docente o UTP) e inicio de sesión con RUT.
 - Estudiantes ingresan con PIN (día y mes de nacimiento); docentes y UTP con contraseña.
 - Formularios validados con íconos y mensajes de error por campo.
-- Sesión guardada con DataStore y usuarios guardados con Room.
+- Sesión guardada con DataStore.
+- Base de datos local con Room: usuarios, objetivos de aprendizaje, contenidos, preguntas,
+  progreso, intentos y respuestas, con datos ficticios iniciales.
+- Panel del estudiante con las asignaturas leídas desde la base de datos.
 - Animaciones en tarjetas, botones de carga y transiciones entre pantallas.
 - Diseño adaptable a celular y tablet, sin perder datos al girar la pantalla.
 
