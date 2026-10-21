@@ -31,6 +31,7 @@ import com.example.mpaz_pro_3.ui.screens.InformeScreen
 import com.example.mpaz_pro_3.ui.screens.LoginScreen
 import com.example.mpaz_pro_3.ui.screens.PruebaScreen
 import com.example.mpaz_pro_3.ui.screens.ResultadoScreen
+import com.example.mpaz_pro_3.ui.screens.RevisionScreen
 import com.example.mpaz_pro_3.ui.screens.RolesScreen
 import com.example.mpaz_pro_3.ui.screens.UnidadScreen
 import com.example.mpaz_pro_3.ui.screens.UtpScreen
@@ -165,8 +166,15 @@ fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
         composable(Rutas.UTP) {
             UtpScreen(
                 onSesionCerrada = { irARoles(navController) },
-                onRevisar = { }
+                onRevisar = { objetivoId -> navController.navigate(Rutas.revision(objetivoId)) }
             )
+        }
+
+        composable(
+            route = Rutas.REVISION,
+            arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
+        ) {
+            RevisionScreen(onVolver = { navController.popBackStack() })
         }
     }
 }

@@ -87,6 +87,13 @@ object Validaciones {
     fun validarConfirmacion(revisado: Boolean): String? =
         if (!revisado) "Confirma que revisaste el informe antes de validarlo" else null
 
+    // UTP: al pedir cambios la observación es obligatoria
+    fun validarObservacion(texto: String): String? = when {
+        texto.isBlank() -> "Escribe qué se debe cambiar"
+        texto.trim().length < 10 -> "La observación debe tener al menos 10 caracteres"
+        else -> null
+    }
+
     // Prueba final: cada pregunta debe tener una alternativa marcada
     fun validarRespuesta(elegida: Int?): String? =
         if (elegida == null) "Elige una respuesta para continuar" else null

@@ -21,6 +21,10 @@ object Rutas {
     const val GUIAS = "guias"
     const val INFORME = "informe"
 
+    // Pantalla de UTP
+    const val REVISION = "revision/{objetivoId}"
+
+    fun revision(objetivoId: Int) = "revision/$objetivoId"
     fun unidad(objetivoId: Int) = "unidad/$objetivoId"
     fun aprende(objetivoId: Int) = "aprende/$objetivoId"
     fun desafios(objetivoId: Int) = "desafios/$objetivoId"
