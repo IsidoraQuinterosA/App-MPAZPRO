@@ -80,6 +80,10 @@ fun AsignarScreen(
                             if (objetivo.asignado) "Asignado · ${objetivo.maxIntentos} intento(s)" else "Sin asignar",
                             style = MaterialTheme.typography.labelMedium
                         )
+                        // Si UTP pidió cambios, el docente ve la observación
+                        if (objetivo.estado == "OBSERVADO" && objetivo.observacion.isNotEmpty()) {
+                            Text("Observación UTP: ${objetivo.observacion}", color = ErrorRojo, style = MaterialTheme.typography.bodyMedium)
+                        }
                     }
                     EtiquetaEstado(objetivo.estado)
                 }
