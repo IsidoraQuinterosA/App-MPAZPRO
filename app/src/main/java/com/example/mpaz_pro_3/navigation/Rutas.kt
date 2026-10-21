@@ -14,11 +14,13 @@ object Rutas {
     const val APRENDE = "aprende/{objetivoId}"
     const val DESAFIOS = "desafios/{objetivoId}"
     const val PRUEBA = "prueba/{objetivoId}"
+    const val RESULTADO = "resultado/{intentoId}"
 
     fun unidad(objetivoId: Int) = "unidad/$objetivoId"
     fun aprende(objetivoId: Int) = "aprende/$objetivoId"
     fun desafios(objetivoId: Int) = "desafios/$objetivoId"
     fun prueba(objetivoId: Int) = "prueba/$objetivoId"
+    fun resultado(intentoId: Long) = "resultado/$intentoId"
 
     fun login(rol: Rol) = "login/${rol.name}"
 

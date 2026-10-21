@@ -22,6 +22,8 @@ class ProgresoRepository(private val progresoDao: ProgresoDao) {
 
     fun intentosDelObjetivo(objetivoId: Int): Flow<List<Intento>> = progresoDao.obtenerIntentosDelObjetivo(objetivoId)
 
+    fun intento(id: Long): Flow<Intento?> = progresoDao.obtenerIntento(id)
+
     fun respuestas(intentoId: Long): Flow<List<Respuesta>> = progresoDao.obtenerRespuestas(intentoId)
 
     // Guarda un intento de la prueba final con todas sus respuestas.

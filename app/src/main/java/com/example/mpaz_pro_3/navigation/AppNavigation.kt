@@ -27,6 +27,7 @@ import com.example.mpaz_pro_3.ui.screens.DocenteScreen
 import com.example.mpaz_pro_3.ui.screens.EstudianteScreen
 import com.example.mpaz_pro_3.ui.screens.LoginScreen
 import com.example.mpaz_pro_3.ui.screens.PruebaScreen
+import com.example.mpaz_pro_3.ui.screens.ResultadoScreen
 import com.example.mpaz_pro_3.ui.screens.RolesScreen
 import com.example.mpaz_pro_3.ui.screens.UnidadScreen
 import com.example.mpaz_pro_3.ui.screens.UtpScreen
@@ -97,7 +98,7 @@ fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
                 onAprende = { navController.navigate(Rutas.aprende(objetivoId)) },
                 onDesafios = { navController.navigate(Rutas.desafios(objetivoId)) },
                 onPrueba = { navController.navigate(Rutas.prueba(objetivoId)) },
-                onVerResultado = { }
+                onVerResultado = { intentoId -> navController.navigate(Rutas.resultado(intentoId)) }
             )
         }
 
@@ -121,8 +122,20 @@ fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
         ) {
             PruebaScreen(
                 onVolver = { navController.popBackStack() },
-                onTerminada = { navController.popBackStack() }
+                onTerminada = { intentoId ->
+                    // Se quita la prueba del historial: "atrás" vuelve a la unidad
+                    navController.navigate(Rutas.resultado(intentoId)) {
+                        popUpTo(Rutas.PRUEBA) { inclusive = true }
+                    }
+                }
             )
+        }
+
+        composable(
+            route = Rutas.RESULTADO,
+            arguments = listOf(navArgument("intentoId") { type = NavType.LongType })
+        ) {
+            ResultadoScreen(onVolver = { navController.popBackStack() })
         }
 
         composable(Rutas.DOCENTE) {

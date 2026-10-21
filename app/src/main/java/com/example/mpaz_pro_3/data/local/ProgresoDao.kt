@@ -32,6 +32,9 @@ interface ProgresoDao {
     @Query("SELECT * FROM intentos WHERE objetivoId = :objetivoId ORDER BY fecha DESC")
     fun obtenerIntentosDelObjetivo(objetivoId: Int): Flow<List<Intento>>
 
+    @Query("SELECT * FROM intentos WHERE id = :id")
+    fun obtenerIntento(id: Long): Flow<Intento?>
+
     @Query("SELECT * FROM respuestas WHERE intentoId = :intentoId")
     fun obtenerRespuestas(intentoId: Long): Flow<List<Respuesta>>
 }

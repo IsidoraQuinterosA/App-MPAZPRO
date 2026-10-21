@@ -78,6 +78,11 @@ fun PruebaScreen(
             return@PantallaConVolver
         }
 
+        if (state.preguntas.isEmpty()) {
+            Text("Esta prueba aún no tiene preguntas.", color = TintaSuave)
+            return@PantallaConVolver
+        }
+
         val total = state.preguntas.size
         val avance by animateFloatAsState((state.indice + 1) / total.toFloat(), label = "avancePrueba")
 
