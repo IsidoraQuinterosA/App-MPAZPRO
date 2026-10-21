@@ -7,11 +7,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.MenuBook
-import androidx.compose.material.icons.filled.Calculate
-import androidx.compose.material.icons.filled.Eco
-import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -26,10 +21,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mpaz_pro_3.model.Asignatura
 import com.example.mpaz_pro_3.ui.components.PanelScaffold
 import com.example.mpaz_pro_3.ui.components.TarjetaAsignatura
-import com.example.mpaz_pro_3.ui.theme.CienciasColor
-import com.example.mpaz_pro_3.ui.theme.HistoriaColor
-import com.example.mpaz_pro_3.ui.theme.LenguajeColor
-import com.example.mpaz_pro_3.ui.theme.MatematicaColor
+import com.example.mpaz_pro_3.ui.theme.colorAsignatura
+import com.example.mpaz_pro_3.ui.theme.iconoAsignatura
 import com.example.mpaz_pro_3.ui.utils.esPantallaAncha
 import com.example.mpaz_pro_3.viewmodel.EstudianteViewModel
 import com.example.mpaz_pro_3.viewmodel.SesionViewModel
@@ -78,8 +71,8 @@ fun EstudianteScreen(
                     nombre = asignatura.nombre,
                     subtitulo = if (disponible) objetivo?.unidad ?: "" else "Próximamente",
                     disponible = disponible,
-                    color = colorAsignatura(asignatura),
-                    icono = iconoAsignatura(asignatura),
+                    color = colorAsignatura(asignatura.name),
+                    icono = iconoAsignatura(asignatura.name),
                     onClick = {
                         scope.launch {
                             val mensaje = if (disponible) "${asignatura.nombre}: las actividades llegan en la Fase 3"
@@ -91,18 +84,4 @@ fun EstudianteScreen(
             }
         }
     }
-}
-
-private fun colorAsignatura(asignatura: Asignatura) = when (asignatura) {
-    Asignatura.LENGUAJE -> LenguajeColor
-    Asignatura.MATEMATICA -> MatematicaColor
-    Asignatura.CIENCIAS -> CienciasColor
-    Asignatura.HISTORIA -> HistoriaColor
-}
-
-private fun iconoAsignatura(asignatura: Asignatura) = when (asignatura) {
-    Asignatura.LENGUAJE -> Icons.AutoMirrored.Filled.MenuBook
-    Asignatura.MATEMATICA -> Icons.Filled.Calculate
-    Asignatura.CIENCIAS -> Icons.Filled.Eco
-    Asignatura.HISTORIA -> Icons.Filled.Public
 }
