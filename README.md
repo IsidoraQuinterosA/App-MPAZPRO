@@ -4,7 +4,7 @@ App Android de apoyo didáctico para estudiantes de 3.º básico de la Escuela E
 Organiza una unidad por asignatura (Lenguaje, Matemática, Ciencias Naturales e Historia) con perfiles
 de estudiante, docente y jefatura UTP.
 
-**Integrantes:** [Nombre Apellido] y [Nombre Apellido]
+**Integrantes:** Isidora Quinteros y Jairo Cid
 **Asignatura:** DSY1105 - Desarrollo de Aplicaciones Móviles, Duoc UC
 
 ## Funcionalidades implementadas
