@@ -26,6 +26,7 @@ import com.example.mpaz_pro_3.ui.screens.DesafiosScreen
 import com.example.mpaz_pro_3.ui.screens.DocenteScreen
 import com.example.mpaz_pro_3.ui.screens.EstudianteScreen
 import com.example.mpaz_pro_3.ui.screens.LoginScreen
+import com.example.mpaz_pro_3.ui.screens.PruebaScreen
 import com.example.mpaz_pro_3.ui.screens.RolesScreen
 import com.example.mpaz_pro_3.ui.screens.UnidadScreen
 import com.example.mpaz_pro_3.ui.screens.UtpScreen
@@ -95,7 +96,7 @@ fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
                 onVolver = { navController.popBackStack() },
                 onAprende = { navController.navigate(Rutas.aprende(objetivoId)) },
                 onDesafios = { navController.navigate(Rutas.desafios(objetivoId)) },
-                onPrueba = { },
+                onPrueba = { navController.navigate(Rutas.prueba(objetivoId)) },
                 onVerResultado = { }
             )
         }
@@ -112,6 +113,16 @@ fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
             arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
         ) {
             DesafiosScreen(onVolver = { navController.popBackStack() })
+        }
+
+        composable(
+            route = Rutas.PRUEBA,
+            arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
+        ) {
+            PruebaScreen(
+                onVolver = { navController.popBackStack() },
+                onTerminada = { navController.popBackStack() }
+            )
         }
 
         composable(Rutas.DOCENTE) {

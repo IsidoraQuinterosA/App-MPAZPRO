@@ -51,6 +51,13 @@ object Validaciones {
         else -> null
     }
 
+    // Prueba final: cada pregunta debe tener una alternativa marcada
+    fun validarRespuesta(elegida: Int?): String? =
+        if (elegida == null) "Elige una respuesta para continuar" else null
+
+    fun validarPruebaCompleta(elegidas: List<Int?>): String? =
+        if (elegidas.any { it == null }) "Responde todas las preguntas antes de entregar" else null
+
     // Revisa que "DDMM" sea una fecha que exista
     private fun esFechaValida(pin: String): Boolean {
         val dia = pin.substring(0, 2).toIntOrNull() ?: return false
