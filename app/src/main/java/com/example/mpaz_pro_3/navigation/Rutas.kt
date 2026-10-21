@@ -11,8 +11,10 @@ object Rutas {
 
     // Pantallas del estudiante (reciben el id del objetivo)
     const val UNIDAD = "unidad/{objetivoId}"
+    const val APRENDE = "aprende/{objetivoId}"
 
     fun unidad(objetivoId: Int) = "unidad/$objetivoId"
+    fun aprende(objetivoId: Int) = "aprende/$objetivoId"
 
     fun login(rol: Rol) = "login/${rol.name}"
 
