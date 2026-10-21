@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.mpaz_pro_3.model.Rol
 import com.example.mpaz_pro_3.ui.screens.AprendeScreen
+import com.example.mpaz_pro_3.ui.screens.AsignarScreen
 import com.example.mpaz_pro_3.ui.screens.DesafiosScreen
 import com.example.mpaz_pro_3.ui.screens.DocenteScreen
 import com.example.mpaz_pro_3.ui.screens.EstudianteScreen
@@ -139,7 +140,14 @@ fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
         }
 
         composable(Rutas.DOCENTE) {
-            DocenteScreen(onSesionCerrada = { irARoles(navController) })
+            DocenteScreen(
+                onSesionCerrada = { irARoles(navController) },
+                onAsignar = { navController.navigate(Rutas.ASIGNAR) }
+            )
+        }
+
+        composable(Rutas.ASIGNAR) {
+            AsignarScreen(onVolver = { navController.popBackStack() })
         }
 
         composable(Rutas.UTP) {

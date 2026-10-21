@@ -51,6 +51,23 @@ object Validaciones {
         else -> null
     }
 
+    // Docente: el objetivo debe estar elegido y aprobado por UTP
+    fun validarObjetivo(estado: String?): String? = when (estado) {
+        null -> "Selecciona un objetivo"
+        "APROBADO" -> null
+        else -> "Este objetivo aún no está aprobado por UTP"
+    }
+
+    fun validarIntentos(texto: String): String? {
+        val numero = texto.toIntOrNull()
+        return when {
+            texto.isBlank() -> "Ingresa la cantidad de intentos"
+            numero == null -> "Debe ser un número"
+            numero !in 1..5 -> "Debe ser entre 1 y 5"
+            else -> null
+        }
+    }
+
     // Prueba final: cada pregunta debe tener una alternativa marcada
     fun validarRespuesta(elegida: Int?): String? =
         if (elegida == null) "Elige una respuesta para continuar" else null

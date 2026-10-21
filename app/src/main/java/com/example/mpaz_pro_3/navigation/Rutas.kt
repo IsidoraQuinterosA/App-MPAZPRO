@@ -16,6 +16,9 @@ object Rutas {
     const val PRUEBA = "prueba/{objetivoId}"
     const val RESULTADO = "resultado/{intentoId}"
 
+    // Pantallas del docente
+    const val ASIGNAR = "asignar"
+
     fun unidad(objetivoId: Int) = "unidad/$objetivoId"
     fun aprende(objetivoId: Int) = "aprende/$objetivoId"
     fun desafios(objetivoId: Int) = "desafios/$objetivoId"

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.Assessment
@@ -15,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,9 +26,18 @@ import com.example.mpaz_pro_3.ui.utils.esPantallaAncha
 import com.example.mpaz_pro_3.viewmodel.SesionViewModel
 import kotlinx.coroutines.launch
 
+// Opción del menú. Si accion es null, la función todavía no está disponible.
+private data class OpcionMenu(
+    val titulo: String,
+    val descripcion: String,
+    val icono: ImageVector,
+    val accion: (() -> Unit)?
+)
+
 @Composable
 fun DocenteScreen(
     onSesionCerrada: () -> Unit,
+    onAsignar: () -> Unit,
     viewModel: SesionViewModel = viewModel()
 ) {
     val sesion by viewModel.sesion.collectAsStateWithLifecycle()
@@ -36,9 +47,9 @@ fun DocenteScreen(
     val columnas = if (esPantallaAncha()) 2 else 1
 
     val opciones = listOf(
-        Triple("Asignar contenidos", "Elige objetivos y define los intentos de la prueba", Icons.AutoMirrored.Filled.Assignment),
-        Triple("Subir guías", "Agrega guías en PDF o imagen", Icons.Filled.UploadFile),
-        Triple("Informe pedagógico", "Revisa, valida y descarga los resultados", Icons.Filled.Assessment)
+        OpcionMenu("Asignar contenidos", "Elige objetivos y define los intentos de la prueba", Icons.AutoMirrored.Filled.Assignment, onAsignar),
+        OpcionMenu("Subir guías", "Agrega guías en PDF, Word o imagen", Icons.Filled.UploadFile, null),
+        OpcionMenu("Informe pedagógico", "Revisa, valida y descarga los resultados", Icons.Filled.Assessment, null)
     )
 
     PanelScaffold(
@@ -55,14 +66,17 @@ fun DocenteScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.padding(padding)
         ) {
-            items(opciones.size) { i ->
-                val (titulo, descripcion, icono) = opciones[i]
+            items(opciones) { opcion ->
                 TarjetaOpcion(
-                    titulo = titulo,
-                    descripcion = descripcion,
-                    icono = icono,
+                    titulo = opcion.titulo,
+                    descripcion = opcion.descripcion,
+                    icono = opcion.icono,
                     onClick = {
-                        scope.launch { snackbarHostState.showSnackbar("$titulo: disponible en la siguiente fase") }
+                        if (opcion.accion != null) {
+                            opcion.accion.invoke()
+                        } else {
+                            scope.launch { snackbarHostState.showSnackbar("${opcion.titulo}: disponible próximamente") }
+                        }
                     }
                 )
             }
