@@ -26,6 +26,7 @@ import com.example.mpaz_pro_3.ui.screens.AsignarScreen
 import com.example.mpaz_pro_3.ui.screens.DesafiosScreen
 import com.example.mpaz_pro_3.ui.screens.DocenteScreen
 import com.example.mpaz_pro_3.ui.screens.EstudianteScreen
+import com.example.mpaz_pro_3.ui.screens.GuiasScreen
 import com.example.mpaz_pro_3.ui.screens.LoginScreen
 import com.example.mpaz_pro_3.ui.screens.PruebaScreen
 import com.example.mpaz_pro_3.ui.screens.ResultadoScreen
@@ -142,8 +143,13 @@ fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
         composable(Rutas.DOCENTE) {
             DocenteScreen(
                 onSesionCerrada = { irARoles(navController) },
-                onAsignar = { navController.navigate(Rutas.ASIGNAR) }
+                onAsignar = { navController.navigate(Rutas.ASIGNAR) },
+                onGuias = { navController.navigate(Rutas.GUIAS) }
             )
+        }
+
+        composable(Rutas.GUIAS) {
+            GuiasScreen(onVolver = { navController.popBackStack() })
         }
 
         composable(Rutas.ASIGNAR) {

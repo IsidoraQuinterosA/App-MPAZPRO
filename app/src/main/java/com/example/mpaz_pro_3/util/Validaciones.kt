@@ -68,6 +68,21 @@ object Validaciones {
         }
     }
 
+    // Docente: formulario para subir guías
+    const val TAMANO_MAXIMO = 10 * 1024 * 1024L  // 10 MB
+
+    fun validarTitulo(titulo: String): String? = when {
+        titulo.isBlank() -> "Escribe un título"
+        titulo.trim().length < 3 -> "El título debe tener al menos 3 caracteres"
+        else -> null
+    }
+
+    fun validarArchivo(nombre: String?, tamano: Long): String? = when {
+        nombre == null -> "Elige un archivo"
+        tamano > TAMANO_MAXIMO -> "El archivo no puede superar 10 MB"
+        else -> null
+    }
+
     // Prueba final: cada pregunta debe tener una alternativa marcada
     fun validarRespuesta(elegida: Int?): String? =
         if (elegida == null) "Elige una respuesta para continuar" else null

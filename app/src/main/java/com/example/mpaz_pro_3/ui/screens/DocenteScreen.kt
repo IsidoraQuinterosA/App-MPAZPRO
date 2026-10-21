@@ -38,6 +38,7 @@ private data class OpcionMenu(
 fun DocenteScreen(
     onSesionCerrada: () -> Unit,
     onAsignar: () -> Unit,
+    onGuias: () -> Unit,
     viewModel: SesionViewModel = viewModel()
 ) {
     val sesion by viewModel.sesion.collectAsStateWithLifecycle()
@@ -48,7 +49,7 @@ fun DocenteScreen(
 
     val opciones = listOf(
         OpcionMenu("Asignar contenidos", "Elige objetivos y define los intentos de la prueba", Icons.AutoMirrored.Filled.Assignment, onAsignar),
-        OpcionMenu("Subir guías", "Agrega guías en PDF, Word o imagen", Icons.Filled.UploadFile, null),
+        OpcionMenu("Subir guías", "Agrega guías en PDF, Word o imagen", Icons.Filled.UploadFile, onGuias),
         OpcionMenu("Informe pedagógico", "Revisa, valida y descarga los resultados", Icons.Filled.Assessment, null)
     )
 

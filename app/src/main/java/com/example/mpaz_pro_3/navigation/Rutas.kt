@@ -18,6 +18,7 @@ object Rutas {
 
     // Pantallas del docente
     const val ASIGNAR = "asignar"
+    const val GUIAS = "guias"
 
     fun unidad(objetivoId: Int) = "unidad/$objetivoId"
     fun aprende(objetivoId: Int) = "aprende/$objetivoId"
