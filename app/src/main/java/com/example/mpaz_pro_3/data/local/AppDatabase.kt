@@ -13,9 +13,10 @@ import androidx.room.RoomDatabase
         Pregunta::class,
         Intento::class,
         Respuesta::class,
-        Progreso::class
+        Progreso::class,
+        Guia::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -23,6 +24,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun usuarioDao(): UsuarioDao
     abstract fun contenidoDao(): ContenidoDao
     abstract fun progresoDao(): ProgresoDao
+    abstract fun guiaDao(): GuiaDao
 
     companion object {
         @Volatile

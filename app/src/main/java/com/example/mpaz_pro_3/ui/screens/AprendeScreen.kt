@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mpaz_pro_3.ui.components.BotonCarga
+import com.example.mpaz_pro_3.ui.components.ImagenArchivo
 import com.example.mpaz_pro_3.ui.components.PantallaConVolver
 import com.example.mpaz_pro_3.ui.theme.AmarilloClaro
 import com.example.mpaz_pro_3.ui.theme.Blanco
@@ -61,16 +63,22 @@ fun AprendeScreen(
 
         Text(contenido.titulo, style = MaterialTheme.typography.headlineSmall)
 
-        // Espacio para la imagen de apoyo
+        // Imagen de apoyo elegida por el docente. Si no hay, se muestra un ícono.
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(160.dp)
+                .height(180.dp)
                 .clip(MaterialTheme.shapes.large)
                 .background(CelesteClaro)
         ) {
-            Icon(Icons.Filled.Image, contentDescription = "Imagen de apoyo", modifier = Modifier.size(56.dp), tint = TintaSuave)
+            var hayImagen = false
+            if (contenido.imagen.isNotEmpty()) {
+                hayImagen = ImagenArchivo(ruta = contenido.imagen, modifier = Modifier.fillMaxSize())
+            }
+            if (!hayImagen) {
+                Icon(Icons.Filled.Image, contentDescription = "Imagen de apoyo", modifier = Modifier.size(56.dp), tint = TintaSuave)
+            }
         }
 
         Card(colors = CardDefaults.cardColors(containerColor = Blanco)) {

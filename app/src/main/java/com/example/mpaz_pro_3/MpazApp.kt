@@ -4,6 +4,7 @@ import android.app.Application
 import com.example.mpaz_pro_3.data.local.AppDatabase
 import com.example.mpaz_pro_3.data.preferences.SesionDataStore
 import com.example.mpaz_pro_3.data.repository.ContenidoRepository
+import com.example.mpaz_pro_3.data.repository.GuiaRepository
 import com.example.mpaz_pro_3.data.repository.ProgresoRepository
 import com.example.mpaz_pro_3.data.repository.UsuarioRepository
 
@@ -20,4 +21,6 @@ class MpazApp : Application() {
     val contenidoRepository by lazy { ContenidoRepository(database.contenidoDao()) }
 
     val progresoRepository by lazy { ProgresoRepository(database.progresoDao()) }
+
+    val guiaRepository by lazy { GuiaRepository(database.guiaDao()) }
 }

@@ -24,6 +24,10 @@ class ContenidoRepository(private val contenidoDao: ContenidoDao) {
         contenidoDao.actualizarObjetivo(objetivo)
     }
 
+    suspend fun actualizarContenido(contenido: Contenido) {
+        contenidoDao.actualizarContenido(contenido)
+    }
+
     suspend fun cargarDatosIniciales() {
         if (contenidoDao.contarObjetivos() == 0) {
             contenidoDao.insertarObjetivos(DatosIniciales.objetivos)

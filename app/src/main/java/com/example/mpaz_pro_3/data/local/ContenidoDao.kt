@@ -36,4 +36,7 @@ interface ContenidoDao {
 
     @Update
     suspend fun actualizarObjetivo(objetivo: ObjetivoAprendizaje)
+
+    @Update
+    suspend fun actualizarContenido(contenido: Contenido)
 }

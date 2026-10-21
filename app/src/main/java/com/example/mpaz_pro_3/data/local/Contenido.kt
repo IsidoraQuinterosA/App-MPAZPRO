@@ -10,5 +10,6 @@ data class Contenido(
     val objetivoId: Int,       // A qué objetivo pertenece
     val titulo: String,
     val explicacion: String,
-    val ejemplo: String
+    val ejemplo: String,
+    val imagen: String = ""    // Ruta de la imagen de apoyo elegida por el docente
 )
