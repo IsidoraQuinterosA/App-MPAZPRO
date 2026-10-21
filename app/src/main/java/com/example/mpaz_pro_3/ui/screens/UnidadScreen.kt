@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,6 +37,7 @@ import com.example.mpaz_pro_3.ui.theme.Petroleo
 import com.example.mpaz_pro_3.ui.theme.TintaSuave
 import com.example.mpaz_pro_3.ui.theme.colorAsignatura
 import com.example.mpaz_pro_3.ui.theme.nombreAsignatura
+import com.example.mpaz_pro_3.util.Archivos
 import com.example.mpaz_pro_3.viewmodel.UnidadViewModel
 
 @Composable
@@ -47,6 +50,7 @@ fun UnidadScreen(
     viewModel: UnidadViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     val objetivo = state.objetivo
     val color = objetivo?.let { colorAsignatura(it.asignatura) } ?: Petroleo
 
@@ -116,6 +120,25 @@ fun UnidadScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 color = TintaSuave
             )
+        }
+
+        // Guías que subió el docente para este objetivo
+        if (state.guias.isNotEmpty()) {
+            Text("Guías de tu profesor", style = MaterialTheme.typography.titleMedium)
+            state.guias.forEach { guia ->
+                Card(
+                    onClick = { Archivos.abrir(context, guia.ruta, guia.tipo) },
+                    colors = CardDefaults.cardColors(containerColor = Blanco),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(14.dp)) {
+                        Icon(Icons.Filled.Description, contentDescription = null, tint = color)
+                        Spacer(Modifier.width(10.dp))
+                        Text(guia.titulo, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                        Text("Abrir", color = color, style = MaterialTheme.typography.labelLarge)
+                    }
+                }
+            }
         }
 
         state.ultimoIntentoId?.let { id ->

@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.mpaz_pro_3.MpazApp
+import com.example.mpaz_pro_3.data.local.Guia
 import com.example.mpaz_pro_3.data.local.ObjetivoAprendizaje
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,8 @@ data class UnidadUiState(
     val aprendeVisto: Boolean = false,
     val nivelSuperado: Int = 0,
     val intentosUsados: Int = 0,
-    val ultimoIntentoId: Long? = null
+    val ultimoIntentoId: Long? = null,
+    val guias: List<Guia> = emptyList()
 )
 
 class UnidadViewModel(
@@ -42,14 +44,16 @@ class UnidadViewModel(
             combine(
                 app.contenidoRepository.objetivo(objetivoId),
                 app.progresoRepository.progreso(rut, objetivoId),
-                app.progresoRepository.intentos(rut, objetivoId)
-            ) { objetivo, progreso, intentos ->
+                app.progresoRepository.intentos(rut, objetivoId),
+                app.guiaRepository.guias(objetivoId)
+            ) { objetivo, progreso, intentos, guias ->
                 UnidadUiState(
                     objetivo = objetivo,
                     aprendeVisto = progreso?.aprendeVisto ?: false,
                     nivelSuperado = progreso?.nivelSuperado ?: 0,
                     intentosUsados = intentos.size,
-                    ultimoIntentoId = intentos.firstOrNull()?.id
+                    ultimoIntentoId = intentos.firstOrNull()?.id,
+                    guias = guias
                 )
             }.collect { _state.value = it }
         }
