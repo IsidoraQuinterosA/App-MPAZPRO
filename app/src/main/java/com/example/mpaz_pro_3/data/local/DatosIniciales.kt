@@ -96,4 +96,24 @@ object DatosIniciales {
         Pregunta(objetivoId = 4, tipo = "PRUEBA", nivel = 0, enunciado = "Si el norte está arriba, ¿dónde está el sur?",
             opcionA = "A la derecha", opcionB = "Arriba", opcionC = "Abajo", correcta = 2)
     )
+
+    // Resultados ficticios de 3 estudiantes de ejemplo (solo identificadores, no son usuarios).
+    // Las preguntas de prueba de Lenguaje tienen id 4, 5 y 6; las de Matemática, 10, 11 y 12.
+    val intentos = listOf(
+        Intento(1001, "25377840-7", 1, 3, 3),
+        Intento(1002, "25111222-3", 1, 2, 3),
+        Intento(1003, "25333444-4", 1, 1, 3),
+        Intento(1004, "25377840-7", 2, 2, 3),
+        Intento(1005, "25111222-3", 2, 1, 3),
+        Intento(1006, "25333444-4", 2, 2, 3)
+    )
+
+    val respuestas = listOf(
+        Respuesta(1001, 1001, 4, 0, true), Respuesta(1002, 1001, 5, 1, true), Respuesta(1003, 1001, 6, 1, true),
+        Respuesta(1004, 1002, 4, 0, true), Respuesta(1005, 1002, 5, 0, false), Respuesta(1006, 1002, 6, 1, true),
+        Respuesta(1007, 1003, 4, 0, true), Respuesta(1008, 1003, 5, 2, false), Respuesta(1009, 1003, 6, 0, false),
+        Respuesta(1010, 1004, 10, 0, true), Respuesta(1011, 1004, 11, 1, true), Respuesta(1012, 1004, 12, 1, false),
+        Respuesta(1013, 1005, 10, 0, true), Respuesta(1014, 1005, 11, 0, false), Respuesta(1015, 1005, 12, 2, false),
+        Respuesta(1016, 1006, 10, 1, false), Respuesta(1017, 1006, 11, 1, true), Respuesta(1018, 1006, 12, 0, true)
+    )
 }

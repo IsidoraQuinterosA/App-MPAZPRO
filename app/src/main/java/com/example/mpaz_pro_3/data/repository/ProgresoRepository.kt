@@ -1,5 +1,6 @@
 package com.example.mpaz_pro_3.data.repository
 
+import com.example.mpaz_pro_3.data.local.DatosIniciales
 import com.example.mpaz_pro_3.data.local.Intento
 import com.example.mpaz_pro_3.data.local.Pregunta
 import com.example.mpaz_pro_3.data.local.Progreso
@@ -23,6 +24,15 @@ class ProgresoRepository(private val progresoDao: ProgresoDao) {
     fun intentosDelObjetivo(objetivoId: Int): Flow<List<Intento>> = progresoDao.obtenerIntentosDelObjetivo(objetivoId)
 
     fun intento(id: Long): Flow<Intento?> = progresoDao.obtenerIntento(id)
+
+    fun respuestasDelObjetivo(objetivoId: Int): Flow<List<Respuesta>> =
+        progresoDao.obtenerRespuestasDelObjetivo(objetivoId)
+
+    // Carga resultados ficticios para que el informe del docente tenga datos de prueba
+    suspend fun cargarDatosIniciales() {
+        progresoDao.insertarIntentos(DatosIniciales.intentos)
+        progresoDao.insertarRespuestasIniciales(DatosIniciales.respuestas)
+    }
 
     fun respuestas(intentoId: Long): Flow<List<Respuesta>> = progresoDao.obtenerRespuestas(intentoId)
 

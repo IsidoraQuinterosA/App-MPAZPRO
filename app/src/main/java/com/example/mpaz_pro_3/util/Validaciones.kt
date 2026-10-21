@@ -83,6 +83,10 @@ object Validaciones {
         else -> null
     }
 
+    // Docente: debe confirmar que revisó el informe antes de validarlo
+    fun validarConfirmacion(revisado: Boolean): String? =
+        if (!revisado) "Confirma que revisaste el informe antes de validarlo" else null
+
     // Prueba final: cada pregunta debe tener una alternativa marcada
     fun validarRespuesta(elegida: Int?): String? =
         if (elegida == null) "Elige una respuesta para continuar" else null

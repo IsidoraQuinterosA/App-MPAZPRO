@@ -19,6 +19,7 @@ class SesionViewModel(application: Application) : AndroidViewModel(application) 
 
     private val repository = (application as MpazApp).usuarioRepository
     private val contenidoRepository = (application as MpazApp).contenidoRepository
+    private val progresoRepository = (application as MpazApp).progresoRepository
 
     // Sesión guardada en DataStore (null si nadie ha iniciado sesión)
     val sesion: StateFlow<Sesion?> = repository.sesion
@@ -36,6 +37,7 @@ class SesionViewModel(application: Application) : AndroidViewModel(application) 
             // La primera vez que se abre la app se cargan los datos ficticios en Room
             repository.cargarDatosIniciales()
             contenidoRepository.cargarDatosIniciales()
+            progresoRepository.cargarDatosIniciales()
             val sesionGuardada = repository.sesion.first()
             _rutaInicial.value = sesionGuardada?.let { Rutas.panelDe(it.rol) } ?: Rutas.ROLES
         }
