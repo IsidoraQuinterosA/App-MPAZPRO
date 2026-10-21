@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.mpaz_pro_3.model.Rol
 import com.example.mpaz_pro_3.ui.screens.AprendeScreen
+import com.example.mpaz_pro_3.ui.screens.DesafiosScreen
 import com.example.mpaz_pro_3.ui.screens.DocenteScreen
 import com.example.mpaz_pro_3.ui.screens.EstudianteScreen
 import com.example.mpaz_pro_3.ui.screens.LoginScreen
@@ -93,7 +94,7 @@ fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
             UnidadScreen(
                 onVolver = { navController.popBackStack() },
                 onAprende = { navController.navigate(Rutas.aprende(objetivoId)) },
-                onDesafios = { },
+                onDesafios = { navController.navigate(Rutas.desafios(objetivoId)) },
                 onPrueba = { },
                 onVerResultado = { }
             )
@@ -104,6 +105,13 @@ fun AppNavigation(sesionViewModel: SesionViewModel = viewModel()) {
             arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
         ) {
             AprendeScreen(onVolver = { navController.popBackStack() })
+        }
+
+        composable(
+            route = Rutas.DESAFIOS,
+            arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
+        ) {
+            DesafiosScreen(onVolver = { navController.popBackStack() })
         }
 
         composable(Rutas.DOCENTE) {
