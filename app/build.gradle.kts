@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp) // Genera el código de Room
+    jacoco // Reporte de cobertura de las pruebas unitarias
 }
 
 android {
@@ -20,6 +21,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Mide la cobertura al correr las pruebas unitarias
+            enableUnitTestCoverage = true
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -38,6 +43,51 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        // Las clases de Android (Log, Uri...) devuelven valores por defecto en las pruebas
+        unitTests.isReturnDefaultValues = true
+    }
+}
+
+// Las pruebas usan JUnit 5 (Kotest corre sobre esta plataforma)
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+    configure<JacocoTaskExtension> {
+        isIncludeNoLocationClasses = true
+        excludes = listOf("jdk.internal.*")
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+// Reporte de cobertura: ./gradlew jacocoTestReport
+// Se mide la lógica (ViewModel, Repository, validaciones y mapeos).
+// Se excluye lo que no es lógica: pantallas Compose, tema, navegación, Room generado y clientes de red.
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
+    group = "verification"
+    description = "Genera el reporte de cobertura de las pruebas unitarias"
+
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+    }
+
+    val excluidos = listOf(
+        "**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
+        "**/*_Impl*.*", "**/*Dao.*", "**/AppDatabase*.*",
+        "**/ui/**", "**/navigation/**",
+        "**/MainActivity*.*", "**/MpazApp*.*",
+        "**/data/remote/RetrofitClient*.*", "**/data/remote/*Api.*", "**/data/remote/ApiConfig*.*",
+        "**/data/preferences/**", "**/util/Archivos*.*", "**/util/ConexionInternet*.*",
+        "**/ComposableSingletons*.*"
+    )
+    val clasesKotlin = fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) { exclude(excluidos) }
+    classDirectories.setFrom(files(clasesKotlin))
+    sourceDirectories.setFrom(files("src/main/java"))
+    executionData.setFrom(fileTree(layout.buildDirectory) { include("**/*.exec", "**/*.ec") })
 }
 
 dependencies {
@@ -75,6 +125,13 @@ dependencies {
 
     // Pruebas
     testImplementation(libs.junit)
+    testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.mockk)
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.vintage.engine) // Ejecuta también las pruebas JUnit 4 antiguas
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
