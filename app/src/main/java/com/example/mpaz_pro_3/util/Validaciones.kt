@@ -68,6 +68,32 @@ object Validaciones {
         }
     }
 
+    // Docente: formulario de preguntas (CRUD con el microservicio)
+    fun validarEnunciado(texto: String): String? = when {
+        texto.isBlank() -> "Escribe la pregunta"
+        texto.trim().length < 5 -> "La pregunta debe tener al menos 5 caracteres"
+        texto.trim().length > 150 -> "La pregunta no puede tener más de 150 caracteres"
+        else -> null
+    }
+
+    fun validarOpcion(texto: String): String? = when {
+        texto.isBlank() -> "Escribe esta alternativa"
+        texto.trim().length > 60 -> "Máximo 60 caracteres"
+        else -> null
+    }
+
+    // Las tres alternativas deben ser distintas entre sí
+    fun validarOpcionesDistintas(a: String, b: String, c: String): String? {
+        val opciones = listOf(a, b, c).map { it.trim().lowercase() }.filter { it.isNotEmpty() }
+        return if (opciones.size != opciones.toSet().size) "Las alternativas no se pueden repetir" else null
+    }
+
+    fun validarCorrecta(correcta: Int?): String? =
+        if (correcta == null || correcta !in 0..2) "Marca cuál es la alternativa correcta" else null
+
+    fun validarNivel(tipo: String, nivel: Int): String? =
+        if (tipo == "DESAFIO" && nivel !in 1..3) "Elige un nivel entre 1 y 3" else null
+
     // Docente: formulario para subir guías
     const val TAMANO_MAXIMO = 10 * 1024 * 1024L  // 10 MB
 

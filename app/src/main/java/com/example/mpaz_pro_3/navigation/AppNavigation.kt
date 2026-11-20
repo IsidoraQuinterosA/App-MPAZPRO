@@ -46,6 +46,7 @@ import com.example.mpaz_pro_3.ui.screens.EstudianteScreen
 import com.example.mpaz_pro_3.ui.screens.GuiasScreen
 import com.example.mpaz_pro_3.ui.screens.InformeScreen
 import com.example.mpaz_pro_3.ui.screens.LoginScreen
+import com.example.mpaz_pro_3.ui.screens.PreguntasScreen
 import com.example.mpaz_pro_3.ui.screens.PruebaScreen
 import com.example.mpaz_pro_3.ui.screens.ResultadoScreen
 import com.example.mpaz_pro_3.ui.screens.RevisionScreen
@@ -170,8 +171,13 @@ fun AppNavigation(
                     onSesionCerrada = { irARoles(navController) },
                     onAsignar = { navController.navigate(Rutas.ASIGNAR) },
                     onGuias = { navController.navigate(Rutas.GUIAS) },
-                    onInforme = { navController.navigate(Rutas.INFORME) }
+                    onInforme = { navController.navigate(Rutas.INFORME) },
+                    onPreguntas = { navController.navigate(Rutas.PREGUNTAS) }
                 )
+            }
+
+            composable(Rutas.PREGUNTAS) {
+                PreguntasScreen(onVolver = { navController.popBackStack() })
             }
 
             composable(Rutas.INFORME) {

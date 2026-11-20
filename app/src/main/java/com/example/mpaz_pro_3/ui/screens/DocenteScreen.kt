@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.Assessment
+import androidx.compose.material.icons.filled.Quiz
 import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -40,6 +41,7 @@ fun DocenteScreen(
     onAsignar: () -> Unit,
     onGuias: () -> Unit,
     onInforme: () -> Unit,
+    onPreguntas: () -> Unit,
     viewModel: SesionViewModel = viewModel()
 ) {
     val sesion by viewModel.sesion.collectAsStateWithLifecycle()
@@ -50,6 +52,7 @@ fun DocenteScreen(
 
     val opciones = listOf(
         OpcionMenu("Asignar contenidos", "Elige objetivos y define los intentos de la prueba", Icons.AutoMirrored.Filled.Assignment, onAsignar),
+        OpcionMenu("Preguntas", "Crea, edita y elimina desafíos y preguntas de prueba", Icons.Filled.Quiz, onPreguntas),
         OpcionMenu("Subir guías", "Agrega guías en PDF, Word o imagen", Icons.Filled.UploadFile, onGuias),
         OpcionMenu("Informe pedagógico", "Revisa, valida y descarga los resultados", Icons.Filled.Assessment, onInforme)
     )

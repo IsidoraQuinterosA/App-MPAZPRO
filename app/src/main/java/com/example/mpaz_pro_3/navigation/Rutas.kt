@@ -20,6 +20,7 @@ object Rutas {
     const val ASIGNAR = "asignar"
     const val GUIAS = "guias"
     const val INFORME = "informe"
+    const val PREGUNTAS = "preguntas"
 
     // Pantalla de UTP
     const val REVISION = "revision/{objetivoId}"
