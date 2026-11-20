@@ -40,6 +40,7 @@ import androidx.navigation.navArgument
 import com.example.mpaz_pro_3.model.Rol
 import com.example.mpaz_pro_3.ui.screens.AprendeScreen
 import com.example.mpaz_pro_3.ui.screens.AsignarScreen
+import com.example.mpaz_pro_3.ui.screens.ColeccionScreen
 import com.example.mpaz_pro_3.ui.screens.DesafiosScreen
 import com.example.mpaz_pro_3.ui.screens.DocenteScreen
 import com.example.mpaz_pro_3.ui.screens.EstudianteScreen
@@ -112,8 +113,13 @@ fun AppNavigation(
             composable(Rutas.ESTUDIANTE) {
                 EstudianteScreen(
                     onSesionCerrada = { irARoles(navController) },
-                    onAbrirUnidad = { objetivoId -> navController.navigate(Rutas.unidad(objetivoId)) }
+                    onAbrirUnidad = { objetivoId -> navController.navigate(Rutas.unidad(objetivoId)) },
+                    onColeccion = { navController.navigate(Rutas.COLECCION) }
                 )
+            }
+
+            composable(Rutas.COLECCION) {
+                ColeccionScreen(onVolver = { navController.popBackStack() })
             }
 
             composable(
@@ -141,7 +147,10 @@ fun AppNavigation(
                 route = Rutas.DESAFIOS,
                 arguments = listOf(navArgument("objetivoId") { type = NavType.IntType })
             ) {
-                DesafiosScreen(onVolver = { navController.popBackStack() })
+                DesafiosScreen(
+                    onVolver = { navController.popBackStack() },
+                    onColeccion = { navController.navigate(Rutas.COLECCION) }
+                )
             }
 
             composable(

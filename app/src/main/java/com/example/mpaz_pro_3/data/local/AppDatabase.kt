@@ -5,6 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
+// Base de datos local SQLite creada con Room.
+// El archivo se llama "mpaz_database" y queda guardado dentro del teléfono.
 @Database(
     entities = [
         Usuario::class,
@@ -14,9 +16,10 @@ import androidx.room.RoomDatabase
         Intento::class,
         Respuesta::class,
         Progreso::class,
-        Guia::class
+        Guia::class,
+        Recompensa::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -25,6 +28,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun contenidoDao(): ContenidoDao
     abstract fun progresoDao(): ProgresoDao
     abstract fun guiaDao(): GuiaDao
+    abstract fun recompensaDao(): RecompensaDao
 
     companion object {
         @Volatile

@@ -7,6 +7,7 @@ import com.example.mpaz_pro_3.data.remote.RetrofitClient
 import com.example.mpaz_pro_3.data.repository.ContenidoRepository
 import com.example.mpaz_pro_3.data.repository.GuiaRepository
 import com.example.mpaz_pro_3.data.repository.ProgresoRepository
+import com.example.mpaz_pro_3.data.repository.RecompensaRepository
 import com.example.mpaz_pro_3.data.repository.UsuarioRepository
 import com.example.mpaz_pro_3.util.ConexionInternet
 
@@ -25,6 +26,8 @@ class MpazApp : Application() {
     val progresoRepository by lazy { ProgresoRepository(database.progresoDao(), RetrofitClient.resultadosApi) }
 
     val guiaRepository by lazy { GuiaRepository(database.guiaDao()) }
+
+    val recompensaRepository by lazy { RecompensaRepository(database.recompensaDao(), RetrofitClient.pokeApi) }
 
     val conexionInternet by lazy { ConexionInternet(this) }
 }

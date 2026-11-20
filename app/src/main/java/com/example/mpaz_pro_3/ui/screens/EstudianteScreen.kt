@@ -8,6 +8,11 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.CatchingPokemon
+import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +37,7 @@ import kotlinx.coroutines.launch
 fun EstudianteScreen(
     onSesionCerrada: () -> Unit,
     onAbrirUnidad: (Int) -> Unit,
+    onColeccion: () -> Unit = {},
     viewModel: SesionViewModel = viewModel(),
     estudianteViewModel: EstudianteViewModel = viewModel()
 ) {
@@ -84,6 +90,13 @@ fun EstudianteScreen(
                         }
                     }
                 )
+            }
+            // Acceso a los Pokémon ganados (PokeAPI)
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                OutlinedButton(onClick = onColeccion, modifier = Modifier.fillMaxWidth()) {
+                    Icon(Icons.Filled.CatchingPokemon, contentDescription = null)
+                    Text("Mi colección de Pokémon", modifier = Modifier.padding(start = 8.dp))
+                }
             }
         }
     }

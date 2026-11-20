@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mpaz_pro_3.MpazApp
 import com.example.mpaz_pro_3.data.local.Pregunta
 import com.example.mpaz_pro_3.data.local.Progreso
+import com.example.mpaz_pro_3.data.local.Recompensa
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +21,11 @@ data class DesafiosUiState(
     val nivelActual: Int = 1,          // 1, 2 o 3. Si es 4, ya terminó los desafíos
     val seleccion: Int? = null,        // Alternativa elegida
     val esCorrecta: Boolean? = null,   // null = todavía no responde
-    val cargado: Boolean = false
+    val cargado: Boolean = false,
+    // Recompensa de la PokeAPI al terminar los 3 niveles
+    val recompensa: Recompensa? = null,
+    val cargandoRecompensa: Boolean = false,
+    val errorRecompensa: String? = null
 ) {
     val pregunta: Pregunta? get() = preguntas.find { it.nivel == nivelActual }
 }
@@ -53,6 +58,11 @@ class DesafiosViewModel(
                     cargado = true
                 )
             }
+            // Si ya había terminado los desafíos, se muestra el Pokémon que ganó
+            if (_state.value.nivelActual > 3) {
+                val ganada = app.recompensaRepository.recompensa(rut, objetivoId)
+                if (ganada != null) _state.update { it.copy(recompensa = ganada) } else obtenerRecompensa()
+            }
         }
     }
 
@@ -78,5 +88,22 @@ class DesafiosViewModel(
 
     fun siguienteNivel() {
         _state.update { it.copy(nivelActual = it.nivelActual + 1, seleccion = null, esCorrecta = null) }
+        if (_state.value.nivelActual > 3) obtenerRecompensa()
+    }
+
+    // Pide el premio a la PokeAPI. Si no hay internet, muestra un mensaje y permite reintentar.
+    fun obtenerRecompensa() {
+        if (_state.value.cargandoRecompensa) return
+        viewModelScope.launch {
+            _state.update { it.copy(cargandoRecompensa = true, errorRecompensa = null) }
+            try {
+                val recompensa = app.recompensaRepository.ganarRecompensa(rut, objetivoId)
+                _state.update { it.copy(cargandoRecompensa = false, recompensa = recompensa) }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(cargandoRecompensa = false, errorRecompensa = "No se pudo cargar tu premio. Revisa la conexión a internet.")
+                }
+            }
+        }
     }
 }

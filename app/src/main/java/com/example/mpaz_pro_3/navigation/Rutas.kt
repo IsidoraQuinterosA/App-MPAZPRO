@@ -15,6 +15,7 @@ object Rutas {
     const val DESAFIOS = "desafios/{objetivoId}"
     const val PRUEBA = "prueba/{objetivoId}"
     const val RESULTADO = "resultado/{intentoId}"
+    const val COLECCION = "coleccion"
 
     // Pantallas del docente
     const val ASIGNAR = "asignar"

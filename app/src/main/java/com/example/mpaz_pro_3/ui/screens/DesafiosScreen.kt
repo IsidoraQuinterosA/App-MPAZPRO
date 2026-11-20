@@ -4,7 +4,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,10 +15,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mpaz_pro_3.ui.components.EstadoOpcion
 import com.example.mpaz_pro_3.ui.components.OpcionRespuesta
 import com.example.mpaz_pro_3.ui.components.PantallaConVolver
+import com.example.mpaz_pro_3.ui.components.TarjetaPokemon
 import com.example.mpaz_pro_3.ui.theme.Amarillo
 import com.example.mpaz_pro_3.ui.theme.AmarilloClaro
 import com.example.mpaz_pro_3.ui.theme.Blanco
@@ -40,6 +45,7 @@ import com.example.mpaz_pro_3.viewmodel.DesafiosViewModel
 @Composable
 fun DesafiosScreen(
     onVolver: () -> Unit,
+    onColeccion: () -> Unit = {},
     viewModel: DesafiosViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -64,6 +70,29 @@ fun DesafiosScreen(
                     Text("¡Superaste los 3 niveles!", style = MaterialTheme.typography.headlineSmall)
                     Text("Ya puedes dar la prueba final.", modifier = Modifier.padding(vertical = 8.dp))
                     Button(onClick = onVolver, modifier = Modifier.fillMaxWidth()) { Text("Volver a la unidad") }
+                }
+            }
+
+            // Premio: un Pokémon traído desde la PokeAPI (API externa con Retrofit)
+            Text("Tu premio", style = MaterialTheme.typography.titleMedium)
+            val recompensa = state.recompensa
+            when {
+                state.cargandoRecompensa -> Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    Text("Buscando tu Pokémon...", color = TintaSuave)
+                }
+                recompensa != null -> {
+                    TarjetaPokemon(recompensa = recompensa, modifier = Modifier.fillMaxWidth())
+                    OutlinedButton(onClick = onColeccion, modifier = Modifier.fillMaxWidth()) {
+                        Text("Ver mi colección")
+                    }
+                }
+                state.errorRecompensa != null -> {
+                    Text(state.errorRecompensa ?: "", color = ErrorRojo)
+                    OutlinedButton(onClick = { viewModel.obtenerRecompensa() }) { Text("Reintentar") }
                 }
             }
             return@PantallaConVolver
