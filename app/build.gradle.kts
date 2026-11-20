@@ -1,9 +1,17 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp) // Genera el código de Room
     jacoco // Reporte de cobertura de las pruebas unitarias
+}
+
+// Datos de la firma: se leen desde keystore.properties (en la raíz del proyecto)
+val propiedadesFirma = Properties().apply {
+    val archivo = rootProject.file("keystore.properties")
+    if (archivo.exists()) archivo.inputStream().use { load(it) }
 }
 
 android {
@@ -15,9 +23,19 @@ android {
         minSdk = 28
         targetSdk = 36
         versionCode = 1
-        versionName = "0.1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // Firma del APK de release con el keystore app/keystore/mpaz-release.jks
+    signingConfigs {
+        create("release") {
+            storeFile = file(propiedadesFirma.getProperty("storeFile", "keystore/mpaz-release.jks"))
+            storePassword = propiedadesFirma.getProperty("storePassword")
+            keyAlias = propiedadesFirma.getProperty("keyAlias")
+            keyPassword = propiedadesFirma.getProperty("keyPassword")
+        }
     }
 
     buildTypes {
@@ -27,6 +45,7 @@ android {
         }
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
