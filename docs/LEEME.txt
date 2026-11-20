@@ -1,0 +1,4 @@
+Guardar aquí las capturas que muestra el README:
+- cobertura.png   : reporte de JaCoCo (app/build/reports/jacoco/jacocoTestReport/html/index.html)
+- apk_firmado.png : pantalla de Android Studio "APK(s) generated successfully" o la carpeta app/release
+- keystore.png    : el archivo app/keystore/mpaz-release.jks en el explorador o en el asistente de firma
