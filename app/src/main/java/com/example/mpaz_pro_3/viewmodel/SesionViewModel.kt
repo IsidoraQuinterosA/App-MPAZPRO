@@ -19,7 +19,6 @@ class SesionViewModel(application: Application) : AndroidViewModel(application) 
 
     private val repository = (application as MpazApp).usuarioRepository
     private val contenidoRepository = (application as MpazApp).contenidoRepository
-    private val progresoRepository = (application as MpazApp).progresoRepository
 
     // Sesión guardada en DataStore (null si nadie ha iniciado sesión)
     val sesion: StateFlow<Sesion?> = repository.sesion
@@ -29,6 +28,10 @@ class SesionViewModel(application: Application) : AndroidViewModel(application) 
     private val _rutaInicial = MutableStateFlow<String?>(null)
     val rutaInicial: StateFlow<String?> = _rutaInicial.asStateFlow()
 
+    // true si al abrir la app no se pudo conectar con los microservicios
+    private val _sinServidor = MutableStateFlow(false)
+    val sinServidor: StateFlow<Boolean> = _sinServidor.asStateFlow()
+
     private val _cerrando = MutableStateFlow(false)
     val cerrando: StateFlow<Boolean> = _cerrando.asStateFlow()
 
@@ -37,9 +40,15 @@ class SesionViewModel(application: Application) : AndroidViewModel(application) 
             // La primera vez que se abre la app se cargan los datos ficticios en Room
             repository.cargarDatosIniciales()
             contenidoRepository.cargarDatosIniciales()
-            progresoRepository.cargarDatosIniciales()
             val sesionGuardada = repository.sesion.first()
             _rutaInicial.value = sesionGuardada?.let { Rutas.panelDe(it.rol) } ?: Rutas.ROLES
+            // Luego se trae la información actualizada desde el microservicio.
+            // Si no hay conexión, la app sigue funcionando con los datos guardados.
+            try {
+                contenidoRepository.sincronizar()
+            } catch (e: Exception) {
+                _sinServidor.value = true
+            }
         }
     }
 

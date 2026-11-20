@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mpaz_pro_3.MpazApp
 import com.example.mpaz_pro_3.data.local.ObjetivoAprendizaje
+import com.example.mpaz_pro_3.data.remote.ApiConfig
 import com.example.mpaz_pro_3.util.Validaciones
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -123,10 +124,14 @@ class InformeViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             _state.update { it.copy(validando = true) }
             delay(600)
-            app.contenidoRepository.actualizarObjetivo(
-                objetivo.copy(informeValidado = true, fechaValidacion = System.currentTimeMillis())
-            )
-            _state.update { it.copy(validando = false, mensaje = "Informe validado") }
+            try {
+                app.contenidoRepository.actualizarObjetivo(
+                    objetivo.copy(informeValidado = true, fechaValidacion = System.currentTimeMillis())
+                )
+                _state.update { it.copy(validando = false, mensaje = "Informe validado") }
+            } catch (e: Exception) {
+                _state.update { it.copy(validando = false, errorRevisado = ApiConfig.MENSAJE_SIN_SERVIDOR) }
+            }
         }
     }
 

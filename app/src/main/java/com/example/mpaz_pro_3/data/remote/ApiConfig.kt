@@ -7,4 +7,7 @@ object ApiConfig {
     const val URL_CONTENIDOS = "http://10.0.2.2:8081/"   // Microservicio ms-contenidos
     const val URL_RESULTADOS = "http://10.0.2.2:8082/"   // Microservicio ms-resultados
     const val URL_POKEAPI = "https://pokeapi.co/api/v2/" // API externa
+
+    // Mensaje que se muestra cuando un microservicio no responde
+    const val MENSAJE_SIN_SERVIDOR = "No se pudo conectar con el servidor. Revisa que los microservicios estén encendidos."
 }

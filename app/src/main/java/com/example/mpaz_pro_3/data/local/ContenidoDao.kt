@@ -2,8 +2,10 @@ package com.example.mpaz_pro_3.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 // Consultas de objetivos, contenidos y preguntas
@@ -39,4 +41,25 @@ interface ContenidoDao {
 
     @Update
     suspend fun actualizarContenido(contenido: Contenido)
+
+    // ---------- Sincronización con el microservicio ms-contenidos ----------
+
+    // Todas las preguntas de un objetivo (desafíos y prueba), para el CRUD del docente
+    @Query("SELECT * FROM preguntas WHERE objetivoId = :objetivoId ORDER BY tipo, nivel, id")
+    fun obtenerTodasLasPreguntas(objetivoId: Int): Flow<List<Pregunta>>
+
+    @Upsert
+    suspend fun guardarObjetivos(objetivos: List<ObjetivoAprendizaje>)
+
+    @Upsert
+    suspend fun guardarPregunta(pregunta: Pregunta)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun reemplazarPreguntas(preguntas: List<Pregunta>)
+
+    @Query("DELETE FROM preguntas")
+    suspend fun eliminarTodasLasPreguntas()
+
+    @Query("DELETE FROM preguntas WHERE id = :id")
+    suspend fun eliminarPregunta(id: Int)
 }

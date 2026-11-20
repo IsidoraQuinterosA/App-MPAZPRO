@@ -152,6 +152,9 @@ fun AsignarScreen(
             Text(if (state.guardandoImagen) "Guardando imagen..." else "Elegir imagen de la galería")
         }
 
+        // Error si el microservicio no respondió
+        MensajeErrorCampo(state.errorServidor)
+
         AnimatedVisibility(visible = state.mensaje != null) {
             Card(colors = CardDefaults.cardColors(containerColor = ExitoFondo)) {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(12.dp)) {

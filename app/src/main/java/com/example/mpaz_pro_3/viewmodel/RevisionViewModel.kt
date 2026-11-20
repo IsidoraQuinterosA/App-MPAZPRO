@@ -8,6 +8,7 @@ import com.example.mpaz_pro_3.MpazApp
 import com.example.mpaz_pro_3.data.local.Contenido
 import com.example.mpaz_pro_3.data.local.ObjetivoAprendizaje
 import com.example.mpaz_pro_3.data.local.Pregunta
+import com.example.mpaz_pro_3.data.remote.ApiConfig
 import com.example.mpaz_pro_3.util.Validaciones
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,8 +64,12 @@ class RevisionViewModel(
         viewModelScope.launch {
             _state.update { it.copy(procesando = true) }
             delay(600)
-            app.contenidoRepository.actualizarObjetivo(objetivo.copy(estado = "APROBADO", observacion = ""))
-            _state.update { it.copy(procesando = false, mensaje = "Contenido aprobado") }
+            try {
+                app.contenidoRepository.actualizarObjetivo(objetivo.copy(estado = "APROBADO", observacion = ""))
+                _state.update { it.copy(procesando = false, mensaje = "Contenido aprobado") }
+            } catch (e: Exception) {
+                _state.update { it.copy(procesando = false, error = ApiConfig.MENSAJE_SIN_SERVIDOR) }
+            }
         }
     }
 
@@ -83,10 +88,14 @@ class RevisionViewModel(
             _state.update { it.copy(procesando = true) }
             delay(600)
             // Un contenido con observaciones deja de estar disponible para los estudiantes
-            app.contenidoRepository.actualizarObjetivo(
-                objetivo.copy(estado = "OBSERVADO", observacion = actual.observacion.trim(), asignado = false)
-            )
-            _state.update { it.copy(procesando = false, mensaje = "Observaciones enviadas al docente") }
+            try {
+                app.contenidoRepository.actualizarObjetivo(
+                    objetivo.copy(estado = "OBSERVADO", observacion = actual.observacion.trim(), asignado = false)
+                )
+                _state.update { it.copy(procesando = false, mensaje = "Observaciones enviadas al docente") }
+            } catch (e: Exception) {
+                _state.update { it.copy(procesando = false, error = ApiConfig.MENSAJE_SIN_SERVIDOR) }
+            }
         }
     }
 }

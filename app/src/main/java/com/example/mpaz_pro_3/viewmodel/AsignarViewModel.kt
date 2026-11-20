@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mpaz_pro_3.MpazApp
 import com.example.mpaz_pro_3.data.local.ObjetivoAprendizaje
+import com.example.mpaz_pro_3.data.remote.ApiConfig
 import com.example.mpaz_pro_3.util.Archivos
 import com.example.mpaz_pro_3.util.Validaciones
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +34,8 @@ data class AsignarUiState(
     val guardando: Boolean = false,
     val imagen: String = "",               // Imagen de apoyo del contenido elegido
     val guardandoImagen: Boolean = false,
-    val mensaje: String? = null
+    val mensaje: String? = null,
+    val errorServidor: String? = null
 ) {
     val seleccionado: ObjetivoAprendizaje? get() = objetivos.find { it.id == seleccionadoId }
 }
@@ -112,7 +114,7 @@ class AsignarViewModel(application: Application) : AndroidViewModel(application)
             objetivo = Validaciones.validarObjetivo(actual.seleccionado?.estado),
             intentos = Validaciones.validarIntentos(actual.intentos)
         )
-        _state.update { it.copy(errores = errores) }
+        _state.update { it.copy(errores = errores, errorServidor = null) }
         val objetivo = actual.seleccionado
         if (errores.objetivo != null || errores.intentos != null || objetivo == null) return
 
@@ -120,9 +122,14 @@ class AsignarViewModel(application: Application) : AndroidViewModel(application)
             _state.update { it.copy(guardando = true) }
             delay(600)
             val intentos = actual.intentos.toInt()
-            app.contenidoRepository.actualizarObjetivo(
-                objetivo.copy(asignado = actual.asignado, maxIntentos = intentos)
-            )
+            try {
+                app.contenidoRepository.actualizarObjetivo(
+                    objetivo.copy(asignado = actual.asignado, maxIntentos = intentos)
+                )
+            } catch (e: Exception) {
+                _state.update { it.copy(guardando = false, errorServidor = ApiConfig.MENSAJE_SIN_SERVIDOR) }
+                return@launch
+            }
             val mensaje = if (actual.asignado) "Objetivo asignado al curso con $intentos intento(s)"
             else "Se quitó la asignación del objetivo"
             _state.update { it.copy(guardando = false, mensaje = mensaje) }

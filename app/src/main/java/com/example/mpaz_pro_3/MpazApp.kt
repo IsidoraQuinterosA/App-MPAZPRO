@@ -3,6 +3,7 @@ package com.example.mpaz_pro_3
 import android.app.Application
 import com.example.mpaz_pro_3.data.local.AppDatabase
 import com.example.mpaz_pro_3.data.preferences.SesionDataStore
+import com.example.mpaz_pro_3.data.remote.RetrofitClient
 import com.example.mpaz_pro_3.data.repository.ContenidoRepository
 import com.example.mpaz_pro_3.data.repository.GuiaRepository
 import com.example.mpaz_pro_3.data.repository.ProgresoRepository
@@ -19,7 +20,7 @@ class MpazApp : Application() {
         UsuarioRepository(database.usuarioDao(), SesionDataStore(this))
     }
 
-    val contenidoRepository by lazy { ContenidoRepository(database.contenidoDao()) }
+    val contenidoRepository by lazy { ContenidoRepository(database.contenidoDao(), RetrofitClient.contenidosApi) }
 
     val progresoRepository by lazy { ProgresoRepository(database.progresoDao()) }
 
