@@ -22,7 +22,7 @@ class MpazApp : Application() {
 
     val contenidoRepository by lazy { ContenidoRepository(database.contenidoDao(), RetrofitClient.contenidosApi) }
 
-    val progresoRepository by lazy { ProgresoRepository(database.progresoDao()) }
+    val progresoRepository by lazy { ProgresoRepository(database.progresoDao(), RetrofitClient.resultadosApi) }
 
     val guiaRepository by lazy { GuiaRepository(database.guiaDao()) }
 

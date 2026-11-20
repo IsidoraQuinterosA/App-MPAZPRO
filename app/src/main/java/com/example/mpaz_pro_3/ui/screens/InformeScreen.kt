@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -26,8 +27,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -57,6 +62,8 @@ fun InformeScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val objetivo = state.objetivo
+    // RUT del estudiante cuyos intentos se quieren reiniciar (abre el diálogo de confirmación)
+    var porReiniciar by rememberSaveable { mutableStateOf<String?>(null) }
 
     // Recurso nativo Archivos: el docente elige dónde guardar el archivo
     val selectorDestino = rememberLauncherForActivityResult(
@@ -86,6 +93,13 @@ fun InformeScreen(
         }
 
         if (objetivo == null) return@PantallaConVolver
+
+        // Mientras se descargan los resultados del microservicio
+        if (state.sincronizando) {
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            Text("Actualizando resultados desde el servidor...", color = TintaSuave)
+        }
+        MensajeErrorCampo(state.errorServidor)
 
         if (state.totalIntentos == 0) {
             Text("Aún no hay pruebas entregadas para este objetivo.", color = TintaSuave)
@@ -134,9 +148,16 @@ fun InformeScreen(
             Column(modifier = Modifier.padding(12.dp)) {
                 state.porEstudiante.forEachIndexed { i, estudiante ->
                     if (i > 0) HorizontalDivider()
-                    Row(modifier = Modifier.padding(vertical = 6.dp)) {
-                        Text(estudiante.rut, modifier = Modifier.weight(1f))
-                        Text("Mejor: ${estudiante.mejorPuntaje} · ${estudiante.intentos} intento(s)")
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 6.dp)) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(estudiante.rut)
+                            Text(
+                                "Mejor: ${estudiante.mejorPuntaje} · ${estudiante.intentos} intento(s)",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = TintaSuave
+                            )
+                        }
+                        TextButton(onClick = { porReiniciar = estudiante.rut }) { Text("Reiniciar") }
                     }
                 }
             }
@@ -172,6 +193,21 @@ fun InformeScreen(
         AnimatedVisibility(visible = state.mensaje != null) {
             Text(state.mensaje ?: "", color = ExitoVerde, style = MaterialTheme.typography.titleMedium)
         }
+    }
+
+    porReiniciar?.let { rut ->
+        AlertDialog(
+            onDismissRequest = { porReiniciar = null },
+            title = { Text("¿Reiniciar intentos?") },
+            text = { Text("Se borrarán los intentos de $rut en este objetivo y podrá volver a dar la prueba.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.reiniciar(rut)
+                    porReiniciar = null
+                }) { Text("Reiniciar") }
+            },
+            dismissButton = { TextButton(onClick = { porReiniciar = null }) { Text("Cancelar") } }
+        )
     }
 }
 

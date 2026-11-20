@@ -34,7 +34,9 @@ data class InformeUiState(
     val revisado: Boolean = false,
     val errorRevisado: String? = null,
     val validando: Boolean = false,
-    val mensaje: String? = null
+    val mensaje: String? = null,
+    val sincronizando: Boolean = false,
+    val errorServidor: String? = null
 ) {
     val objetivo: ObjetivoAprendizaje? get() = objetivos.find { it.id == seleccionadoId }
 
@@ -68,6 +70,8 @@ class InformeViewModel(application: Application) : AndroidViewModel(application)
 
         trabajoInforme?.cancel()
         trabajoInforme = viewModelScope.launch {
+            // Trae los resultados de todo el curso desde el microservicio ms-resultados
+            sincronizar(objetivoId)
             combine(
                 app.progresoRepository.intentosDelObjetivo(objetivoId),
                 app.progresoRepository.respuestasDelObjetivo(objetivoId),
@@ -100,6 +104,29 @@ class InformeViewModel(application: Application) : AndroidViewModel(application)
                         promedio = totales.second
                     )
                 }
+            }
+        }
+    }
+
+    private suspend fun sincronizar(objetivoId: Int) {
+        _state.update { it.copy(sincronizando = true, errorServidor = null) }
+        try {
+            app.progresoRepository.sincronizarIntentos(objetivoId)
+            _state.update { it.copy(sincronizando = false) }
+        } catch (e: Exception) {
+            _state.update { it.copy(sincronizando = false, errorServidor = ApiConfig.MENSAJE_SIN_SERVIDOR) }
+        }
+    }
+
+    // El docente reinicia los intentos de un estudiante para que pueda volver a dar la prueba
+    fun reiniciar(rut: String) {
+        val objetivoId = _state.value.seleccionadoId ?: return
+        viewModelScope.launch {
+            try {
+                app.progresoRepository.reiniciarIntentos(rut, objetivoId)
+                _state.update { it.copy(mensaje = "Intentos de $rut reiniciados") }
+            } catch (e: Exception) {
+                _state.update { it.copy(errorServidor = ApiConfig.MENSAJE_SIN_SERVIDOR) }
             }
         }
     }

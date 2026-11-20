@@ -47,10 +47,21 @@ interface ProgresoDao {
     )
     fun obtenerRespuestasDelObjetivo(objetivoId: Int): Flow<List<Respuesta>>
 
-    // Para los resultados ficticios iniciales. IGNORE evita duplicarlos.
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertarIntentos(intentos: List<Intento>)
+    // ---------- Sincronización con el microservicio ms-resultados ----------
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertarRespuestasIniciales(respuestas: List<Respuesta>)
+    // REPLACE: si el intento ya existe (mismo id del servidor), se reemplaza
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun guardarIntentos(intentos: List<Intento>)
+
+    @Query("DELETE FROM respuestas WHERE intentoId IN (SELECT id FROM intentos WHERE objetivoId = :objetivoId)")
+    suspend fun eliminarRespuestasDelObjetivo(objetivoId: Int)
+
+    @Query("DELETE FROM intentos WHERE objetivoId = :objetivoId")
+    suspend fun eliminarIntentosDelObjetivo(objetivoId: Int)
+
+    @Query("DELETE FROM respuestas WHERE intentoId = :intentoId")
+    suspend fun eliminarRespuestasDelIntento(intentoId: Long)
+
+    @Query("DELETE FROM intentos WHERE id = :intentoId")
+    suspend fun eliminarIntento(intentoId: Long)
 }
