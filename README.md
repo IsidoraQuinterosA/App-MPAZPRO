@@ -110,7 +110,7 @@ el código generado por Room ni los clientes de red.
 - Configuración: `keystore.properties` y `signingConfigs` en `app/build.gradle.kts`.
 - Generar: **Build > Generate Signed App Bundle / APK > APK**, usando el keystore anterior y la variante `release`.
   También con `gradlew assembleRelease` (queda en `app/build/outputs/apk/release/app-release.apk`).
-- APK entregado: `app/release/app-release.apk`.
+- APK entregado: en la sección **Releases** del repositorio (versión `v1.0.0`, archivo `app-release.apk`). Se publica ahí porque pesa más de 25 MB, el máximo que GitHub acepta al subir archivos desde la página.
 
 ![APK firmado](docs/apk_firmado.png)
 
